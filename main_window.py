@@ -3,7 +3,9 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QTabWidget, QAction, QToolBar
 from styles import MAIN_QSS
 from views.pos_view import PosView
 from views.reports_view import ReportsView
+from views.inventory_view import InventoryView
 from views.manage_common import ManageCategories, ManageProducts, ManageTables, ManageServers, ManageUsers
+from views.manage_currencies import ManageCurrencies
 
 class MainWindow(QMainWindow):
     def __init__(self, current_user):
@@ -16,8 +18,10 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.pos = PosView()
         self.reports = ReportsView()
+        self.inventory = InventoryView()
         self.tabs.addTab(self.pos, "POS")
         self.tabs.addTab(self.reports, "Rapports")
+        self.tabs.addTab(self.inventory, "Inventaire")
         self.setCentralWidget(self.tabs)
 
         tb = QToolBar("Admin")
@@ -42,6 +46,10 @@ class MainWindow(QMainWindow):
         act_users = QAction("Utilisateurs", self)
         act_users.triggered.connect(lambda: self.open_admin_tab(ManageUsers(), "Utilisateurs"))
         tb.addAction(act_users)
+
+        act_currencies = QAction("Devises", self)
+        act_currencies.triggered.connect(lambda: self.open_admin_tab(ManageCurrencies(), "Devises"))
+        tb.addAction(act_currencies)
 
         if self.current_user["role"] != "admin":
             tb.setVisible(False)

@@ -1,0 +1,13 @@
+# Installation des dépendances
+# Exécutez cette commande dans votre terminal pour installer reportlab :
+# pip install reportlab
+
+# Si vous utilisez un environnement virtuel, activez-le d'abord :
+# python -m venv venv
+# venv\Scripts\activate  # Sur Windows
+# source venv/bin/activate  # Sur Linux/Mac
+# pip install reportlab PyQt5
+
+# Liste complète des dépendances :
+PyQt5>=5.15.0
+reportlab>=3.6.0
