@@ -11,11 +11,13 @@ class LoginDialog(QDialog):
 
         layout.addWidget(QLabel("Nom d'utilisateur"))
         self.user = QLineEdit()
+        self.user.setText("admin")
         layout.addWidget(self.user)
 
         layout.addWidget(QLabel("Mot de passe"))
         self.pwd = QLineEdit()
-        self.pwd.setEchoMode(QLineEdit.Password)
+        self.pwd.setEchoMode(QLineEdit.Password)        
+        self.pwd.setFocus()
         layout.addWidget(self.pwd)
 
         btns = QHBoxLayout()

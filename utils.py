@@ -16,3 +16,10 @@ def ask(parent, text) -> bool:
 
 def money(v: float) -> str:
     return f"{v:,.2f}".replace(",", " ").replace(".", ",")
+
+def log_admin_error(msg: str):
+    try:
+        with open("admin_errors.log", "a", encoding="utf-8") as f:
+            f.write(msg + "\n")
+    except Exception:
+        pass
