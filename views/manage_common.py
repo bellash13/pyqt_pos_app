@@ -127,6 +127,10 @@ class ManageServers(CrudBase):
         super().__init__(["Nom", "Actif"])
         self.btn_add.clicked.connect(self.add_row)
         self.btn_del.clicked.connect(self.del_row)
+        # Ajout du bouton Modifier
+        self.btn_edit = QPushButton("Modifier")
+        self.btn_edit.clicked.connect(self.edit_row)
+        self.layout().itemAt(0).layout().insertWidget(1, self.btn_edit)
         self.reload()
 
     def reload(self):
@@ -137,16 +141,67 @@ class ManageServers(CrudBase):
             self.tbl.setItem(i,1,QTableWidgetItem("Oui" if r[2] else "Non"))
             self.tbl.setItem(i,2,QTableWidgetItem(str(r[0])))
         self.tbl.setColumnHidden(2, True)
+        # Sélection automatique de la première ligne si le tableau n'est pas vide
+        if len(rows) > 0:
+            self.tbl.setCurrentCell(0, 0)
+            self.btn_edit.setEnabled(True)
+            self.btn_del.setEnabled(True)
+        else:
+            self.btn_edit.setEnabled(False)
+            self.btn_del.setEnabled(False)
+        # Connecter le signal de sélection pour activer/désactiver les boutons
+        self.tbl.itemSelectionChanged.connect(self.update_buttons_state)
+
+    def update_buttons_state(self):
+        row = self.tbl.currentRow()
+        has_selection = row >= 0 and self.tbl.rowCount() > 0
+        self.btn_edit.setEnabled(has_selection)
+        self.btn_del.setEnabled(has_selection)
 
     def add_row(self):
         self.conn.execute("INSERT INTO servers(name,active) VALUES(?,1)", ("Nouveau serveur",))
         self.conn.commit()
         self.reload()
 
+    def edit_row(self):
+        row = self.tbl.currentRow()
+        if row < 0:
+            info(self, "Sélectionnez un serveur à modifier.")
+            return
+        id_item = self.tbl.item(row,2)
+        name_item = self.tbl.item(row,0)
+        active_item = self.tbl.item(row,1)
+        if id_item is None or name_item is None or active_item is None:
+            info(self, "La sélection est invalide. Veuillez réessayer.")
+            return
+        sid = int(id_item.text())
+        name = name_item.text()
+        active = 1 if active_item.text() == "Oui" else 0
+        from PyQt5.QtWidgets import QInputDialog
+        new_name, ok = QInputDialog.getText(self, "Modifier le serveur", "Nom du serveur:", text=name)
+        if not ok or not new_name.strip():
+            return
+        new_active = active
+        from PyQt5.QtWidgets import QMessageBox
+        reply = QMessageBox.question(self, "Activer le serveur", "Le serveur est-il actif ?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes if active else QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            new_active = 1
+        else:
+            new_active = 0
+        self.conn.execute("UPDATE servers SET name=?, active=? WHERE id=?", (new_name, new_active, sid))
+        self.conn.commit()
+        self.reload()
+
     def del_row(self):
         row = self.tbl.currentRow()
-        if row<0: return
-        sid = int(self.tbl.item(row,2).text())
+        if row < 0:
+            info(self, "Sélectionnez un serveur à supprimer.")
+            return
+        id_item = self.tbl.item(row,2)
+        if id_item is None:
+            info(self, "La sélection est invalide. Veuillez réessayer.")
+            return
+        sid = int(id_item.text())
         if ask(self, "Supprimer le serveur sélectionné ?"):
             self.conn.execute("DELETE FROM servers WHERE id=?", (sid,))
             self.conn.commit()
