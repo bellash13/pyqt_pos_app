@@ -35,3 +35,6 @@ htmlcov/
 .tox/
 .coverage
 *.spec
+__pycache__/**
+*.py[cod]
+*.cpython.*

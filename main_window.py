@@ -16,6 +16,8 @@ class MainWindow(QMainWindow):
         self.setStyleSheet(MAIN_QSS)
 
         self.tabs = QTabWidget()
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.close_tab)
         self.pos = PosView()
         self.reports = ReportsView()
         self.inventory = InventoryView()
@@ -55,5 +57,30 @@ class MainWindow(QMainWindow):
             tb.setVisible(False)
 
     def open_admin_tab(self, widget: QWidget, title: str):
-        idx = self.tabs.addTab(widget, f"Admin – {title}")
+        tab_title = f"Admin – {title}"
+        # Vérifier si l'onglet existe déjà
+        for i in range(self.tabs.count()):
+            if self.tabs.tabText(i) == tab_title:
+                # Si possible, recharger les données
+                tab_widget = self.tabs.widget(i)
+                if hasattr(tab_widget, "reload"):
+                    try:
+                        tab_widget.reload()
+                    except Exception:
+                        pass
+                self.tabs.setCurrentIndex(i)
+                return
+        # Sinon, ajouter l'onglet
+        idx = self.tabs.addTab(widget, tab_title)
         self.tabs.setCurrentIndex(idx)
+        if hasattr(widget, "reload"):
+            try:
+                widget.reload()
+            except Exception:
+                pass
+
+    def close_tab(self, index):
+        # Empêche la fermeture des onglets principaux (POS, Rapports, Inventaire)
+        if index < 3:
+            return
+        self.tabs.removeTab(index)
