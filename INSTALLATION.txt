@@ -1,0 +1,37 @@
+# Guide d'installation de l'application POS
+
+1. **Décompressez l'archive**
+   - Extraire le fichier `pyqt_pos_app_dist.zip` dans un dossier de votre choix.
+
+2. **Installez Python (si nécessaire)**
+   - Téléchargez et installez Python 3.8 ou plus récent depuis https://python.org
+   - Vérifiez l'installation avec :
+     ```
+     python --version
+     ```
+
+3. **Installez les dépendances**
+   - Ouvrez une fenêtre PowerShell ou Terminal dans le dossier extrait
+   - Exécutez :
+     ```
+     pip install -r requirements.txt
+     ```
+
+4. **Lancez l'application**
+   - Toujours dans le dossier, exécutez :
+     ```
+     python app.py
+     ```
+
+5. **Identifiants par défaut**
+   - Admin : `admin` / `admin123`
+   - Caissier : `caissier` / `caissier123`
+
+6. **Documentation**
+   - Consultez `README.md` et `GUIDE_NOUVELLES_FONCTIONNALITES.md` pour l'utilisation détaillée.
+
+---
+
+**Remarque :**
+- La base de données `pos.db` est incluse. Pour démarrer avec une base vide, supprimez ce fichier avant le premier lancement.
+- Pour toute question, contactez le distributeur ou consultez la documentation fournie.
